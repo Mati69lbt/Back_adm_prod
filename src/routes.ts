@@ -38,6 +38,17 @@ router.post(
 router.put(
   "/:id",
   param("id").isInt().withMessage("ID no válido"),
+  body("name").notEmpty().withMessage("El campo nombre no puede estar vacío"),
+  body("price")
+    .isNumeric()
+    .withMessage("El campo precio debe ser numérico")
+    .notEmpty()
+    .withMessage("El campo precio no puede estar vacío")
+    .custom((value) => value > 0)
+    .withMessage("El campo precio debe ser un valor positivo"),
+  body("availability")
+    .isBoolean()
+    .withMessage("Valor para disponibilidad no válido"),
   handleIpuntsError,
   UpdateProduct
 );
