@@ -56,14 +56,12 @@ export const UpdateProduct = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     const product = await Product.findByPk(id);
-    
 
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-    await product.update(req.body);    
+    await product.update(req.body);
     await product.save();
-    
 
     res.json({ data: product });
   } catch (error) {
@@ -77,6 +75,8 @@ export const UpdateProduct = async (req: Request, res: Response) => {
 
 export const updateAvailability = async (req: Request, res: Response) => {
   const id = req.params.id;
+  console.log("id: ", id);
+
   try {
     const product = await Product.findByPk(id);
     if (!product) {

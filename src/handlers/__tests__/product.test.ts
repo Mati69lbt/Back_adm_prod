@@ -10,7 +10,7 @@ describe("POST /api/productos", () => {
 
     expect(response.status).toEqual(201);
     expect(response.body).toHaveProperty("data");
-
+    console.log(`data.body, create: ${response.body.data.availability}`);
     expect(response.status).not.toBe(200);
     expect(response.status).not.toBe(404);
     expect(response.body).not.toHaveProperty("errors");
@@ -30,7 +30,7 @@ describe("POST /api/productos", () => {
 });
 
 describe("GET /api/productos", () => {
-  it("GET a json response with products", async () => {
+  it("GET a json response with productos", async () => {
     const response = await request(server).get("/api/productos");
     expect(response.status).toBe(200);
     expect(response.headers["content-type"]).toMatch(/json/);
@@ -65,12 +65,42 @@ describe("GET /api/productos/:id", () => {
   });
 });
 
-describe("DELETE /api/producto/:id" , () => {
-   it("should check a valid ID", async () => {
-     const response = await request(server).get("/api/productos/not-valid-url");
-     expect(response.status).toBe(400);
-     expect(response.body).toHaveProperty("errors");
-     expect(response.body.errors).toHaveLength(1);
-     expect(response.body.errors[0].msg).toBe("ID no válido");
-   });
-})
+describe("PATCH /api/productos/:id", () => {
+  it("should return a 404 response for a non-existing product", async () => {
+    const productId = 2000;
+    const response = await request(server).patch(`/api/productos/${productId}`);
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("Product not found");
+    expect(response.status).not.toBe(200);
+    expect(response.body).not.toHaveProperty("product");
+  });
+
+});
+
+describe("DELETE /api/producto/:id", () => {
+  it("should check a valid ID", async () => {
+    const response = await request(server).get("/api/productos/not-valid-url");
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty("errors");
+    expect(response.body.errors).toHaveLength(1);
+    expect(response.body.errors[0].msg).toBe("ID no válido");
+  });
+  it("should return a 404 response for a non-existent product", async () => {
+    const productId = 2000;
+    const response = await request(server).delete(
+      `/api/productos/${productId}`
+    );
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe("Product not found");
+    expect(response.status).not.toBe(200);
+  });
+
+  it("should delete a product", async () => {
+    const response = await request(server).delete("/api/productos/1");
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe("Product deleted successfully");
+
+    expect(response.status).not.toBe(404);
+    expect(response.status).not.toBe(400);
+  });
+});
