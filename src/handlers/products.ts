@@ -1,4 +1,4 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import Product from "../models/Product.model";
 
 export const getProducts = async (req: Request, res: Response) => {
@@ -6,7 +6,7 @@ export const getProducts = async (req: Request, res: Response) => {
     const products = await Product.findAll({
       order: [["name", "ASC"]],
       attributes: {
-        exclude: ["createdAt", "updatedAt", "availability"],
+        exclude: ["createdAt", "updatedAt"],
       },
     });
     res.json({
